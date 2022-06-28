@@ -13,53 +13,54 @@ class LoginActivity : AppCompatActivity() {
     private val binding by lazy {
         ActivityLoginBinding.inflate(layoutInflater)
     }
-    var auth: FirebaseAuth? = null
+
+    private var auth: FirebaseAuth? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         auth = FirebaseAuth.getInstance()
         binding.emailLoginButton.setOnClickListener {
-            signinAndSignup()
+           //signinAndSignup()
+            startActivity(Intent(this, MainActivity::class.java))
         }
+
     }
 
-    fun signinAndSignup() {
-
-        val email = binding.emailEdittext.toString()
-        val password = binding.passwordEdittext.toString()
-
-        if( email.isBlank() || password.isBlank()){
-            Toast.makeText(this, "Email/Password 를 입력하세요.", Toast.LENGTH_LONG).show()
-        }else{
-            auth?.createUserWithEmailAndPassword(binding.emailEdittext.toString(), binding.passwordEdittext.toString())?.
-            addOnCompleteListener {
+    private fun signinAndSignup() {
+            var email = binding.emailEdittext.toString().trim()
+            var password = binding.passwordEdittext.toString().trim()
+            auth?.createUserWithEmailAndPassword(email, password)?.
+            addOnCompleteListener(this) {
                     task ->
                 if(task.isSuccessful){
                     //Creating a user account
-                    moveMainPage(task.result?.user)
+                    val user = auth!!.currentUser
+                    moveMainPage(user)
                 }else if(task.exception?.message.isNullOrEmpty()){
                     //Show the error message
                     Toast.makeText(this, task.exception?.message, Toast.LENGTH_LONG).show()
                 }else{
                     //Login if you have account
-                    signinEmail()
+                    signinEmail(email, password)
                 }
             }
-        }
     }
-    fun signinEmail() {
-        auth?.createUserWithEmailAndPassword(binding.emailEdittext.toString(), binding.passwordEdittext.toString())?.
-        addOnCompleteListener {
+
+    private fun signinEmail(email: String, password: String) {
+        auth?.signInWithEmailAndPassword(email, password)?.
+        addOnCompleteListener(this) {
                 task ->
             if(task.isSuccessful){
                 //Creating a user account
-                moveMainPage(task.result?.user)
+                val user = auth!!.currentUser
+                moveMainPage(user)
             }else
                 //Show the error message
-                Toast.makeText(this, task.exception?.message, Toast.LENGTH_LONG).show()
+                Toast.makeText(this, task.exception?.message , Toast.LENGTH_LONG).show()
         }
     }
-    fun moveMainPage(user: FirebaseUser?) {
+    private fun moveMainPage(user: FirebaseUser?) {
         if(user!= null){
             startActivity(Intent(this, MainActivity::class.java))
         }
