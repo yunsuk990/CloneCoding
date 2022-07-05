@@ -9,7 +9,10 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import com.example.instagram.R
+import com.example.instagram.navigation.model.ContentDTO
 import com.google.android.gms.tasks.Task
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import java.text.SimpleDateFormat
 import java.util.*
@@ -18,6 +21,8 @@ class AddPhotoActivity : AppCompatActivity() {
 
     var storage: FirebaseStorage? = null
     var photoUri: Uri? = null
+    var auth: FirebaseAuth? = null
+    var firestore: FirebaseFirestore? = null
     private lateinit var ActivityResult: ActivityResultLauncher<Intent>
 
     private val binding by lazy {
@@ -30,6 +35,8 @@ class AddPhotoActivity : AppCompatActivity() {
 
         //Initiate storage
         storage = FirebaseStorage.getInstance()
+        auth = FirebaseAuth.getInstance()
+        firestore = FirebaseFirestore.getInstance()
 
         //Open the album
         var photoPickerIntent = Intent(Intent.ACTION_PICK)
@@ -59,7 +66,29 @@ class AddPhotoActivity : AppCompatActivity() {
 
           //FileUpload
         storageRef?.putFile(photoUri!!)?.addOnSuccessListener {
-            Toast.makeText(this, getString(R.string.upload_success), Toast.LENGTH_LONG).show()
+            storageRef.downloadUrl.addOnSuccessListener { uri ->
+                var contentDto = ContentDTO()
+                //Insert downloadUrl of image
+                contentDto.imageUrl = uri.toString()
+
+                //Insert uid of user
+                contentDto.uid = auth?.currentUser?.uid
+
+                //Insert userId
+                contentDto.userId = auth?.currentUser?.email
+
+                //Insert explain of content
+                contentDto.explain = binding.addphotoEditExplain.text.toString()
+
+                //Insert timestamp
+                contentDto.timestamp = System.currentTimeMillis()
+
+                firestore?.collection("images")?.document()?.set(contentDto)
+                setResult(RESULT_OK) //정상적으로 작업 완료했음을 리턴
+                finish()
+            }
+
+
         }?.addOnFailureListener{
             Toast.makeText(this, getString(R.string.upload_fail), Toast.LENGTH_LONG).show()
         }
