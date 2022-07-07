@@ -72,10 +72,10 @@ class AddPhotoActivity : AppCompatActivity() {
                 contentDto.imageUrl = uri.toString()
 
                 //Insert uid of user
-                contentDto.uid = auth?.currentUser?.uid
+                contentDto.uid = auth?.currentUser?.uid.toString()
 
                 //Insert userId
-                contentDto.userId = auth?.currentUser?.email
+                contentDto.userId = auth?.currentUser?.email.toString()
 
                 //Insert explain of content
                 contentDto.explain = binding.addphotoEditExplain.text.toString()
