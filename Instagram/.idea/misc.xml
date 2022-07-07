@@ -5,12 +5,13 @@
       <map>
         <entry key="..\:/Users/android/CloneCoding/Instagram/app/src/main/res/drawable/ic_home.xml" value="0.1405" />
         <entry key="..\:/Users/android/CloneCoding/Instagram/app/src/main/res/layout/activity_add_photo.xml" value="0.264" />
-        <entry key="..\:/Users/android/CloneCoding/Instagram/app/src/main/res/layout/activity_login.xml" value="0.2111111111111111" />
+        <entry key="..\:/Users/android/CloneCoding/Instagram/app/src/main/res/layout/activity_login.xml" value="0.2708333333333333" />
         <entry key="..\:/Users/android/CloneCoding/Instagram/app/src/main/res/layout/activity_main.xml" value="0.264" />
         <entry key="..\:/Users/android/CloneCoding/Instagram/app/src/main/res/layout/fragment_alarm.xml" value="0.27395833333333336" />
         <entry key="..\:/Users/android/CloneCoding/Instagram/app/src/main/res/layout/fragment_detail.xml" value="0.27395833333333336" />
         <entry key="..\:/Users/android/CloneCoding/Instagram/app/src/main/res/layout/fragment_grid.xml" value="0.27395833333333336" />
         <entry key="..\:/Users/android/CloneCoding/Instagram/app/src/main/res/layout/fragment_user.xml" value="0.27395833333333336" />
+        <entry key="..\:/Users/android/CloneCoding/Instagram/app/src/main/res/layout/item_detail.xml" value="0.264" />
         <entry key="..\:/Users/android/CloneCoding/Instagram/app/src/main/res/menu/bottom_navigation_main.xml" value="0.4" />
       </map>
     </option>
