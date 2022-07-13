@@ -8,15 +8,18 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.instagram.R
 import com.example.instagram.databinding.FragmentDetailBinding
 import com.example.instagram.databinding.ItemDetailBinding
 import com.example.instagram.navigation.model.ContentDTO
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
 class DetailViewFragment: Fragment() {
     private var _binding: FragmentDetailBinding? = null
     private val binding get() = _binding!!
     var firestore: FirebaseFirestore? = null
+    var uid: String? = null
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -24,6 +27,7 @@ class DetailViewFragment: Fragment() {
     ): View? {
         _binding = FragmentDetailBinding.inflate(inflater, container, false)
         firestore = FirebaseFirestore.getInstance()
+        uid = FirebaseAuth.getInstance().currentUser?.uid
 
         _binding!!.detailfragmentRecyclerview.adapter = DetailViewRecyclerViewAdapter()
         _binding!!.detailfragmentRecyclerview.layoutManager = LinearLayoutManager(activity)
@@ -58,22 +62,52 @@ class DetailViewFragment: Fragment() {
             var detailviewitemExplainTextview = bind.detailviewitemExplainTextview
             var detailviewitemFavoriteTextview = bind.detailviewitemFavoriteTextview
             var detailviewitemProfileImage = bind.detailviewitemProfileImage
+            var detailviewitemFavoriteImageview = bind.detailviewitemFavoriteImageview
         }
 
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
             var holder = (holder as CustomViewHolder)
             holder.detailviewitemProfileTextview.text = contentDTOs!![position].userId
-            Glide.with(holder.itemView.context).load(contentDTOs!![position].imageUrl).into(holder.detailviewitemImageviewContent)
+            Glide.with(holder.itemView.context).load(contentDTOs!![position].imageUrl).centerCrop().into(holder.detailviewitemImageviewContent)
             holder.detailviewitemExplainTextview.text = contentDTOs!![position].explain
             holder.detailviewitemFavoriteTextview.text = "Likes " + contentDTOs!![position].favoriteCount
             Glide.with(holder.itemView.context).load(contentDTOs!![position].imageUrl).into(holder.detailviewitemProfileImage)
+
+            //This code is when the button is clicked
+            holder.detailviewitemFavoriteImageview.setOnClickListener{
+                favoriteEvent(position)
+            }
+
+            //This code is when the page is loaded
+            if(contentDTOs!![position].favorites.containsKey(uid)){
+                //This is like status
+                holder.detailviewitemFavoriteImageview.setImageResource(R.drawable.ic_favorite)
+            }else{
+                //This is unlike status
+                holder.detailviewitemFavoriteImageview.setImageResource(R.drawable.ic_favorite_border)
+            }
         }
 
         override fun getItemCount(): Int {
             return contentDTOs.size
         }
 
+        fun favoriteEvent(position: Int){
+            var tsDoc = firestore?.collection("images")?.document(contentUidList[position])
+            firestore?.runTransaction{ transaction ->
+                var contentDTO = transaction.get(tsDoc!!).toObject(ContentDTO::class.java)
+                if(contentDTO!!.favorites.containsKey(uid)){
+                    //Where the button is clicked
+                    contentDTO?.favoriteCount = contentDTO?.favoriteCount - 1
+                    contentDTO?.favorites.remove(uid)
+                }else{
+                    //When the button is not clicked
+                    contentDTO?.favoriteCount = contentDTO?.favoriteCount + 1
+                    contentDTO?.favorites[uid!!] = true
+
+                }
+                transaction.set(tsDoc, contentDTO)
+            }
+        }
     }
-
 }
-
