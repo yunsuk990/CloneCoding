@@ -12,7 +12,9 @@ import com.example.instagram.R
 import com.example.instagram.navigation.model.ContentDTO
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import java.text.SimpleDateFormat
 import java.util.*
@@ -21,10 +23,9 @@ class AddPhotoActivity : AppCompatActivity() {
 
     var storage: FirebaseStorage? = null
     var photoUri: Uri? = null
-    var auth: FirebaseAuth? = null
     var firestore: FirebaseFirestore? = null
+    var auth : FirebaseAuth? = null
     private lateinit var ActivityResult: ActivityResultLauncher<Intent>
-
     private val binding by lazy {
         ActivityAddPhotoBinding.inflate(layoutInflater)
     }
@@ -35,8 +36,8 @@ class AddPhotoActivity : AppCompatActivity() {
 
         //Initiate storage
         storage = FirebaseStorage.getInstance()
-        auth = FirebaseAuth.getInstance()
         firestore = FirebaseFirestore.getInstance()
+        auth = FirebaseAuth.getInstance()
 
         //Open the album
         var photoPickerIntent = Intent(Intent.ACTION_PICK)
@@ -45,7 +46,7 @@ class AddPhotoActivity : AppCompatActivity() {
             ActivityResultContracts.StartActivityForResult()){ result ->
             if(result.resultCode == RESULT_OK){
                 //This is path to the selected image
-                photoUri = result.data?.data
+                photoUri = result?.data?.data
                 binding.addphotoImage.setImageURI(photoUri)
             }else {
                 //Exit the addPhotoActivity if you leave the album without selecting it
@@ -67,15 +68,16 @@ class AddPhotoActivity : AppCompatActivity() {
           //FileUpload
         storageRef?.putFile(photoUri!!)?.addOnSuccessListener {
             storageRef.downloadUrl.addOnSuccessListener { uri ->
+                var user = auth?.currentUser
                 var contentDto = ContentDTO()
                 //Insert downloadUrl of image
                 contentDto.imageUrl = uri.toString()
 
                 //Insert uid of user
-                contentDto.uid = auth?.currentUser?.uid.toString()
+                contentDto.uid = user?.uid
 
                 //Insert userId
-                contentDto.userId = auth?.currentUser?.email.toString()
+                contentDto.userId = user?.email
 
                 //Insert explain of content
                 contentDto.explain = binding.addphotoEditExplain.text.toString()
