@@ -10,6 +10,7 @@ import androidx.core.content.ContextCompat
 import com.example.instagram.databinding.ActivityMainBinding
 import com.example.instagram.navigation.*
 import com.google.android.material.navigation.NavigationBarView
+import com.google.firebase.auth.FirebaseAuth
 
 class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListener {
 
@@ -46,6 +47,10 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
 
             R.id.action_account -> {
                 var userFragment = UserFragment()
+                var bundle = Bundle()
+                var uid = FirebaseAuth.getInstance().currentUser?.uid
+                bundle.putString("destinationUid", uid)
+                userFragment.arguments = bundle
                 supportFragmentManager.beginTransaction()
                     .replace(R.id.main_content, userFragment).commit()
                 return true
