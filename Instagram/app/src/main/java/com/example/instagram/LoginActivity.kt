@@ -7,6 +7,8 @@ import android.widget.Toast
 import com.example.instagram.databinding.ActivityLoginBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 class LoginActivity : AppCompatActivity() {
 
@@ -14,22 +16,22 @@ class LoginActivity : AppCompatActivity() {
         ActivityLoginBinding.inflate(layoutInflater)
     }
 
-    private var auth: FirebaseAuth? = null
+    private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        auth = FirebaseAuth.getInstance()
+        auth = Firebase.auth
         binding.emailLoginButton.setOnClickListener {
-           //signinAndSignup()
-            startActivity(Intent(this, MainActivity::class.java))
+           signinAndSignup()
+            //startActivity(Intent(this, MainActivity::class.java))
         }
 
     }
 
     private fun signinAndSignup() {
-            var email = binding.emailEdittext.toString().trim()
-            var password = binding.passwordEdittext.toString().trim()
+            var email = binding.emailEdittext.text.toString().trim()
+            var password = binding.passwordEdittext.text.toString().trim()
             auth?.createUserWithEmailAndPassword(email, password)?.
             addOnCompleteListener(this) {
                     task ->
@@ -53,7 +55,7 @@ class LoginActivity : AppCompatActivity() {
                 task ->
             if(task.isSuccessful){
                 //Creating a user account
-                val user = auth!!.currentUser
+                val user = auth.currentUser
                 moveMainPage(user)
             }else
                 //Show the error message
