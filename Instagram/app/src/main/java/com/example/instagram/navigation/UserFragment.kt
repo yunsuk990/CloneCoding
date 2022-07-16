@@ -16,7 +16,6 @@ import com.example.instagram.databinding.FragmentUserBinding
 import com.example.instagram.navigation.model.ContentDTO
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.ktx.Firebase
 
 
 class UserFragment: Fragment() {
@@ -73,7 +72,8 @@ class UserFragment: Fragment() {
             return contentDTos.size
         }
 
-        inner class CustomViewHolder(var imageview: ImageView): RecyclerView.ViewHolder(imageview) {
+        inner class CustomViewHolder(var imageview: ImageView): RecyclerView.ViewHolder(imageview){
+
         }
     }
 }
