@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.View
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.instagram.databinding.ActivityMainBinding
@@ -14,11 +15,12 @@ import com.google.firebase.auth.FirebaseAuth
 
 class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListener {
 
-    private val binding by lazy {
+    public val binding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        setToolbarDefault()
         when(item.itemId){
             R.id.action_home -> {
                 var detailViewFragment = DetailViewFragment()
@@ -57,6 +59,12 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
             }
         }
         return false
+    }
+
+    fun setToolbarDefault() {
+        binding.toolbarUsername.visibility = View.GONE
+        binding.toolbarBtnBack.visibility = View.GONE
+        binding.toolbarTitleImage.visibility = View.VISIBLE
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
