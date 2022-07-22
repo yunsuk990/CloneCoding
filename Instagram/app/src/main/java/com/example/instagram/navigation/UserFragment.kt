@@ -40,6 +40,7 @@ class UserFragment: Fragment() {
         auth = FirebaseAuth.getInstance()
         uid = arguments?.getString("destinationUid")
         currentUserUid = auth?.currentUser?.uid
+
         if(uid == currentUserUid){
             //MyPage
             binding?.accountBtnFollowSignout?.text = getString(R.string.signout)
