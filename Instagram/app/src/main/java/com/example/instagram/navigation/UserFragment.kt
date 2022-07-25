@@ -56,7 +56,7 @@ class UserFragment: Fragment() {
         currentUserUid = auth?.currentUser?.uid
 
 
-        if(uid == currentUserUid){
+        if( uid == currentUserUid){
             //MyPage
             binding?.accountBtnFollowSignout?.text = getString(R.string.signout)
             binding?.accountBtnFollowSignout?.setOnClickListener {
