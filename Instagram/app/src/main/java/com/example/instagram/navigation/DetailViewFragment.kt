@@ -1,5 +1,6 @@
 package com.example.instagram.navigation
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -64,6 +65,7 @@ class DetailViewFragment: Fragment() {
             var detailviewitemFavoriteTextview = bind.detailviewitemFavoriteTextview
             var detailviewitemProfileImage = bind.detailviewitemProfileImage
             var detailviewitemFavoriteImageview = bind.detailviewitemFavoriteImageview
+            var detailviewitemCommentImageview = bind.detailviewitemCommentImageview
         }
 
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
@@ -95,6 +97,12 @@ class DetailViewFragment: Fragment() {
                 bundle.putString("userId", contentDTOs[position].userId)
                 fragment.arguments = bundle
                 activity?.supportFragmentManager?.beginTransaction()?.replace(R.id.main_content, fragment)?.commit()
+            }
+
+            holder.detailviewitemCommentImageview.setOnClickListener{ v->
+                var intent = Intent(v.context, CommentActivity::class.java)
+                intent.putExtra("contentUid", contentUidList[position])
+                startActivity(intent)
             }
         }
 
