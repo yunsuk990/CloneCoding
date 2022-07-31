@@ -12,6 +12,7 @@ import com.bumptech.glide.Glide
 import com.example.instagram.R
 import com.example.instagram.databinding.FragmentDetailBinding
 import com.example.instagram.databinding.ItemDetailBinding
+import com.example.instagram.navigation.model.AlarmDTO
 import com.example.instagram.navigation.model.ContentDTO
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -102,6 +103,7 @@ class DetailViewFragment: Fragment() {
             holder.detailviewitemCommentImageview.setOnClickListener{ v->
                 var intent = Intent(v.context, CommentActivity::class.java)
                 intent.putExtra("contentUid", contentUidList[position])
+                intent.putExtra("destionationUid", contentDTOs[position].uid)
                 startActivity(intent)
             }
         }
@@ -122,10 +124,21 @@ class DetailViewFragment: Fragment() {
                     //When the button is not clicked
                     contentDTO?.favoriteCount = contentDTO?.favoriteCount + 1
                     contentDTO?.favorites[uid!!] = true
+                    favoriteAlarm(contentDTOs[position].uid!!)
 
                 }
                 transaction.set(tsDoc, contentDTO)
             }
+        }
+
+        fun favoriteAlarm(destionationUid: String){
+            var alarmDTO = AlarmDTO()
+            alarmDTO.destinationUid = destionationUid
+            alarmDTO.userId = FirebaseAuth.getInstance().currentUser?.email
+            alarmDTO.uid = FirebaseAuth.getInstance().currentUser?.uid
+            alarmDTO.kind = 0
+            alarmDTO.timestamp = System.currentTimeMillis()
+            FirebaseFirestore.getInstance().collection("alarms").document().set(alarmDTO)
         }
     }
 }
