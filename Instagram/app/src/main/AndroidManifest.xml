@@ -36,6 +36,9 @@
         <activity
             android:name=".MainActivity"
             android:exported="false" />
+        <meta-data
+            android:name="com.google.firebase.messaging.noti"
+            android:resource="@drawable/push_icon"/>
     </application>
 
 </manifest>
