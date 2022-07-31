@@ -34,7 +34,7 @@
 
     <!-- Alarm -->
     <string name="alarm_favorite">Liked the press</string>
-    <string name="alarm_comment">left a message</string>
+n   <string name="alarm_comment">left a message</string>
     <string name="alarm_follow">has started to follow your account</string>
 
     <!-- Comment -->
