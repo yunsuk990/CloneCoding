@@ -23,6 +23,7 @@ import com.example.instagram.LoginActivity
 import com.example.instagram.MainActivity
 import com.example.instagram.R
 import com.example.instagram.databinding.FragmentUserBinding
+import com.example.instagram.navigation.model.AlarmDTO
 import com.example.instagram.navigation.model.ContentDTO
 import com.example.instagram.navigation.model.FollowDTO
 import com.google.android.gms.tasks.Task
@@ -180,6 +181,7 @@ class UserFragment: Fragment() {
                 //It add following third person when a third person do not follow me
                 followDTO!!.followerCount  = followDTO!!.followerCount + 1
                 followDTO!!.followers[currentUserUid!!] = true
+                followerAlarm(uid!!)
             }
             transaction.set(tsDocFollower, followDTO!!)
             return@runTransaction
@@ -187,6 +189,16 @@ class UserFragment: Fragment() {
 
 
 
+    }
+
+    fun followerAlarm(destinationUid: String){
+        var alarmDto = AlarmDTO()
+        alarmDto.destinationUid = destinationUid
+        alarmDto.userId = auth?.currentUser?.email
+        alarmDto.uid = auth?.currentUser?.uid
+        alarmDto.kind = 2
+        alarmDto.timestamp = System.currentTimeMillis()
+        FirebaseFirestore.getInstance().collection("alarms").document().set(alarmDto)
     }
 
     fun getProfileImage() {
