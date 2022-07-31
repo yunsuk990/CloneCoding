@@ -10,6 +10,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.instagram.databinding.ActivityCommentBinding
 import com.example.instagram.databinding.ItemCommentBinding
+import com.example.instagram.navigation.model.AlarmDTO
 import com.example.instagram.navigation.model.ContentDTO
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -20,11 +21,13 @@ class CommentActivity : AppCompatActivity() {
         ActivityCommentBinding.inflate(layoutInflater)
     }
     var contentUid: String? = null
+    var destinationUid: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         contentUid = intent.getStringExtra("contentUid")
+        destinationUid = intent.getStringExtra("destinationUid")
         binding.commentRecyclerview.adapter = CommentRecyclerviewAdapter()
         binding.commentRecyclerview.layoutManager = LinearLayoutManager(this)
 
@@ -37,8 +40,21 @@ class CommentActivity : AppCompatActivity() {
             FirebaseFirestore.getInstance().collection("images").document(contentUid!!)
                 .collection("comments").document()
                 .set(comment)
+            commentAlarm(destinationUid!!, comment.comment!!)
             binding.commentEditMessage.setText("")
         }
+    }
+
+    fun commentAlarm(destinationUid: String, message: String){
+        var alarmDTO = AlarmDTO()
+        alarmDTO.destinationUid = destinationUid
+        alarmDTO.userId = FirebaseAuth.getInstance().currentUser?.email
+        alarmDTO.kind = 1
+        alarmDTO.uid = FirebaseAuth.getInstance().currentUser?.uid
+        alarmDTO.timestamp = System.currentTimeMillis()
+        alarmDTO.message = message
+        FirebaseFirestore.getInstance().collection("alarms").document().set(alarmDTO)
+
     }
     inner class CommentRecyclerviewAdapter(): RecyclerView.Adapter<CommentRecyclerviewAdapter.CustomViewHolder>(){
 
